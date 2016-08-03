@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1014939438110",
+    "firebase_url": "https://sampleandroidappusingfir-a68b0.firebaseio.com",
+    "project_id": "sampleandroidappusingfir-a68b0",
+    "storage_bucket": "sampleandroidappusingfir-a68b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014939438110:android:9e5b218973d542a7",
+        "android_client_info": {
+          "package_name": "android.freelessons.org.sampleandroidappusingfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1014939438110-l3p9qhhk7bssm57t01fcie4ovaq7sv18.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhw4YntaaxaCM0OsRfDFdSntT-m8qdwUQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
