@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="home_text">Home</string>
+    <string name="events_title">Events</string>
+    <string name="my_events_title">My Events</string>
+    <string name="event_name_title">Name</string>
+    <string name="event_description_title">Description</string>
+    <string name="event_save_title">Save Event</string>
 </resources>
