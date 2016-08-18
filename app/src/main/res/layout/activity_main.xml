@@ -11,6 +11,7 @@
     android:orientation="vertical"
     tools:context="android.freelessons.org.sampleandroidappusingfirebase.MainActivity">
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content" android:text="@string/events_title"
@@ -23,11 +24,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/eventsList"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/addEvent">
+        android:layout_above="@+id/bottomView"
+        android:layout_below="@+id/addEvent" >
 
     </ListView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/bottomView"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Sign Up"
+            android:id="@+id/signUp" android:visibility="gone"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Sign In"
+            android:id="@+id/signIn" android:visibility="gone"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Sign Out"
+            android:id="@+id/signOut" android:visibility="gone"/>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addEvent"

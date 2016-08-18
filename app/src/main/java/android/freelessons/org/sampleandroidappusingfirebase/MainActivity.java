@@ -1,17 +1,21 @@
 package android.freelessons.org.sampleandroidappusingfirebase;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.EventActivity;
+import android.freelessons.org.sampleandroidappusingfirebase.ui.LoginUI;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +41,10 @@ public class MainActivity extends RoboActionBarActivity {
     @InjectView(R.id.eventsList) ListView listView;
     @InjectView(R.id.addEvent)
     FloatingActionButton addEvent;
+    @InjectView(R.id.signIn)
+    Button signIn;
+    @InjectView(R.id.signUp) Button signUp;
+    @InjectView(R.id.signOut) Button signOut;
     EventListAdapter eventListAdapter=new EventListAdapter();
     DatabaseReference databaseReference;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM, yyyy");
@@ -102,8 +110,47 @@ public class MainActivity extends RoboActionBarActivity {
                 addEvent();
             }
         });
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signUp();
+            }
+        });
+        signOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOut();
+            }
+        });
+        updateViews();
     }
+    private void updateViews(){
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+            signIn.setVisibility(View.GONE);
+            signOut.setVisibility(View.VISIBLE);
+            signUp.setVisibility(View.GONE);
+        }else{
+            signIn.setVisibility(View.VISIBLE);
+            signOut.setVisibility(View.GONE);
+            signUp.setVisibility(View.VISIBLE);
+        }
+    }
+    private void signIn(){
+        DialogFragment dialog=new LoginUI();
+        dialog.show(getFragmentManager(),"LoginUI");
+    }
+    private void signUp(){
 
+    }
+    private void signOut(){
+
+    }
     class EventListAdapter extends BaseAdapter {
         @Override
         public int getCount() {
