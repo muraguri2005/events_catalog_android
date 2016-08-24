@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.EventActivity;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.LoginUI;
+import android.freelessons.org.sampleandroidappusingfirebase.ui.SignUpUI;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
@@ -146,7 +147,8 @@ public class MainActivity extends RoboActionBarActivity {
         dialog.show(getFragmentManager(),"LoginUI");
     }
     private void signUp(){
-
+        DialogFragment dialog=SignUpUI.newInstance();
+        dialog.show(getFragmentManager(),"SignUpUI");
     }
     private void signOut(){
 
