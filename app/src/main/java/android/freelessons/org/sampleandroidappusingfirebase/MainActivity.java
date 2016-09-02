@@ -4,9 +4,10 @@ import android.app.DialogFragment;
 import android.content.Intent;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.EventActivity;
-import android.freelessons.org.sampleandroidappusingfirebase.ui.LoginUI;
+import android.freelessons.org.sampleandroidappusingfirebase.ui.SignInUI;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.SignUpUI;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,14 +24,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import roboguice.activity.RoboActionBarActivity;
-import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -48,12 +48,21 @@ public class MainActivity extends RoboActionBarActivity {
     @InjectView(R.id.signOut) Button signOut;
     EventListAdapter eventListAdapter=new EventListAdapter();
     DatabaseReference databaseReference;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM, yyyy");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+    FirebaseAuth firebaseAuth;
+    FirebaseAuth.AuthStateListener firebaseAuthStateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         databaseReference=FirebaseDatabase.getInstance().getReference();
-
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuthStateListener=new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                updateViews();
+            }
+        };
+        firebaseAuth.addAuthStateListener(firebaseAuthStateListener);
     }
 
     private void addEvent(){
@@ -64,7 +73,7 @@ public class MainActivity extends RoboActionBarActivity {
     protected void onResume() {
         events=new ArrayList<>();
         super.onResume();
-
+        listView.setAdapter(eventListAdapter);
         DatabaseReference eventsReference=databaseReference.child("events");
         eventsReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -104,7 +113,7 @@ public class MainActivity extends RoboActionBarActivity {
 
             }
         });
-        listView.setAdapter(eventListAdapter);
+
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,7 +141,7 @@ public class MainActivity extends RoboActionBarActivity {
         updateViews();
     }
     private void updateViews(){
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null){
+        if(firebaseAuth.getCurrentUser()!=null){
             signIn.setVisibility(View.GONE);
             signOut.setVisibility(View.VISIBLE);
             signUp.setVisibility(View.GONE);
@@ -143,15 +152,18 @@ public class MainActivity extends RoboActionBarActivity {
         }
     }
     private void signIn(){
-        DialogFragment dialog=new LoginUI();
-        dialog.show(getFragmentManager(),"LoginUI");
+        DialogFragment dialog=SignInUI.newInstance();
+        //ViewGroup.LayoutParams layoutParams= new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        //dialog.setLayoutParams(layoutParams);
+        dialog.show(getFragmentManager(),"SignInUI");
+
     }
     private void signUp(){
         DialogFragment dialog=SignUpUI.newInstance();
         dialog.show(getFragmentManager(),"SignUpUI");
     }
     private void signOut(){
-
+        firebaseAuth.signOut();
     }
     class EventListAdapter extends BaseAdapter {
         @Override

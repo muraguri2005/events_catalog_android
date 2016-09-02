@@ -22,24 +22,23 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-public class SignUpUI extends DialogFragment {
-
-    Button signUpButton;
+public class SignInUI extends DialogFragment {
+    Button signInButton;
     EditText passwordEditText;
     AutoCompleteTextView emailAutoCompleteTextView;
     FirebaseAuth firebaseAuth;
-    public static SignUpUI newInstance(){
-        return new SignUpUI();
+    public static SignInUI newInstance(){
+        return new SignInUI();
     }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.signup, null, false);
+        View v = inflater.inflate(R.layout.signin, null, false);
         findViews(v);
         firebaseAuth = FirebaseAuth.getInstance();
-
         return v;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -49,27 +48,28 @@ public class SignUpUI extends DialogFragment {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
         }
     }
+
     private void findViews(View rootView){
-        signUpButton=(Button)rootView.findViewById(R.id.email_sign_up);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        signInButton=(Button)rootView.findViewById(R.id.email_sign_in);
+        signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signUp();
+                signIn();
             }
         });
         emailAutoCompleteTextView=(AutoCompleteTextView)rootView.findViewById(R.id.email);
         passwordEditText=(EditText)rootView.findViewById(R.id.password);
     }
-    private void signUp(){
+    private void signIn(){
         if(inputValid()) {
-            firebaseAuth.createUserWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            firebaseAuth.signInWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Sign Up successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Sign in successful", Toast.LENGTH_SHORT).show();
                         dismiss();
                     }else{
-                        Toast.makeText(getContext(), "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error: ", Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -80,16 +80,18 @@ public class SignUpUI extends DialogFragment {
             }else if(isEmailValid()){
                 Toast.makeText(getContext(), "Entered password is invalid", Toast.LENGTH_SHORT).show();
             }
+
         }
     }
     private boolean inputValid(){
-        return !emailAutoCompleteTextView.getText().toString().isEmpty()&&!passwordEditText.getText().toString().isEmpty();
+        return isEmailValid()&&isPasswordValid();
     }
     private boolean isEmailValid(){
         return !emailAutoCompleteTextView.getText().toString().isEmpty();
-        //&& emailAutoCompleteTextView.getText().toString();
+                //&& emailAutoCompleteTextView.getText().toString();
     }
     private boolean  isPasswordValid(){
         return !passwordEditText.getText().toString().isEmpty() && passwordEditText.getText().toString().length()>6;
     }
+
 }
