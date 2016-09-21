@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -66,8 +67,13 @@ public class MainActivity extends RoboActionBarActivity {
     }
 
     private void addEvent(){
-        Intent intent=new Intent(getApplicationContext(),EventActivity.class);
-        startActivity(intent);
+        if(firebaseAuth.getCurrentUser()!=null){
+            Intent intent=new Intent(getApplicationContext(),EventActivity.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(MainActivity.this, "Please sign in to create an event", Toast.LENGTH_SHORT).show();
+        }
+
     }
     @Override
     protected void onResume() {
@@ -153,10 +159,7 @@ public class MainActivity extends RoboActionBarActivity {
     }
     private void signIn(){
         DialogFragment dialog=SignInUI.newInstance();
-        //ViewGroup.LayoutParams layoutParams= new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        //dialog.setLayoutParams(layoutParams);
         dialog.show(getFragmentManager(),"SignInUI");
-
     }
     private void signUp(){
         DialogFragment dialog=SignUpUI.newInstance();

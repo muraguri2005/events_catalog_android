@@ -12,6 +12,7 @@ public class Event {
     Date startDate=new Date();
     double duration;
     String durationType;
+    String userId;
 
     public String getEventId() {
         return eventId;
@@ -69,6 +70,14 @@ public class Event {
         this.durationType = durationType;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public static String EVENT_ID_PROPERTY="eventid";
     public static String NAME_PROPERTY="name";
     public static String DESCRIPTION_PROPERTY="description";
@@ -76,6 +85,7 @@ public class Event {
     public static String START_DATE_PROPERTY="startdate";
     public static String  DURATION_PROPERTY="duration";
     public static String  DURATION_TYPE_PROPERTY="durationtype";
+    public static String USER_ID_PROPERTY="userid";
     public Map<String,Object> toMap(){
         Map<String,Object> eventMap=new HashMap<>();
         eventMap.put(EVENT_ID_PROPERTY,eventId);
@@ -85,6 +95,7 @@ public class Event {
         eventMap.put(START_DATE_PROPERTY,startDate.getTime());
         eventMap.put(DURATION_PROPERTY,duration);
         eventMap.put(DURATION_TYPE_PROPERTY,durationType);
+        eventMap.put(USER_ID_PROPERTY,userId);
         return eventMap;
     }
 }
