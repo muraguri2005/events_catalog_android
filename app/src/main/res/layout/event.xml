@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Location"
+        android:text="@string/location"
         android:id="@+id/locationTextView"
         android:layout_gravity="center_horizontal" />
 
@@ -51,20 +51,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/locationEditText"
-        android:hint="location"/>
+        android:hint="@string/location_hint"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Start Date"
+        android:text="@string/start_date"
         android:id="@+id/startDateTextView"
-        android:layout_gravity="center_horizontal" android:inputType="date"/>
+        android:layout_gravity="center_horizontal"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/startDateEditText"
-        android:hint="start date" android:inputType="date"/>
+        android:hint="@string/start_date" android:inputType="date"/>
 
     <Button
         android:layout_width="match_parent"

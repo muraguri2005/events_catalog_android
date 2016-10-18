@@ -9,26 +9,21 @@ import android.freelessons.org.sampleandroidappusingfirebase.ui.SignUpUI;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.view.LayoutInflater;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 import java.util.Locale;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -38,20 +33,22 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActionBarActivity {
 
-    static String TAG="SAPWF";
-    List<Event> events=new ArrayList<>();
-    @InjectView(R.id.eventsList) ListView listView;
+    private static final String EVENTS_CHILD = "events";
+    @InjectView(R.id.eventRecyclerView) RecyclerView mEventRecyclerView;
     @InjectView(R.id.addEvent)
     FloatingActionButton addEvent;
     @InjectView(R.id.signIn)
     Button signIn;
     @InjectView(R.id.signUp) Button signUp;
     @InjectView(R.id.signOut) Button signOut;
-    EventListAdapter eventListAdapter=new EventListAdapter();
     DatabaseReference databaseReference;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
     FirebaseAuth firebaseAuth;
     FirebaseAuth.AuthStateListener firebaseAuthStateListener;
+
+    FirebaseRecyclerAdapter<Event,EventViewHolder> firebaseRecyclerAdapter;
+    LinearLayoutManager mLinearLayoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +61,46 @@ public class MainActivity extends RoboActionBarActivity {
             }
         };
         firebaseAuth.addAuthStateListener(firebaseAuthStateListener);
+
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mEventRecyclerView.setLayoutManager(mLinearLayoutManager);
+
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(Event.class,R.layout.event_item,EventViewHolder.class,databaseReference.child(EVENTS_CHILD)) {
+            @Override
+            protected void populateViewHolder(EventViewHolder viewHolder, Event event, int position) {
+                viewHolder.eventDate.setText(simpleDateFormat.format(event.getStartDate()));
+                viewHolder.eventDescription.setText(event.getDescription());
+                viewHolder.eventLocation.setText(event.getLocation());
+                viewHolder.eventName.setText(event.getName());
+            }
+
+            @Override
+            protected Event parseSnapshot(DataSnapshot snapshot) {
+                Event event = new Event();
+                if(snapshot.child(Event.NAME_PROPERTY).getValue() != null)
+                    event.setName(snapshot.child(Event.NAME_PROPERTY).getValue().toString());
+                if(snapshot.child(Event.DESCRIPTION_PROPERTY).getValue() != null)
+                    event.setDescription(snapshot.child(Event.DESCRIPTION_PROPERTY).getValue().toString());
+                if(snapshot.child(Event.LOCATION_PROPERTY).getValue() != null)
+                    event.setLocation(snapshot.child(Event.LOCATION_PROPERTY).getValue().toString());
+                if(snapshot.child(Event.START_DATE_PROPERTY).getValue() != null)
+                    event.setStartDate(new Date(Long.parseLong(snapshot.child(Event.START_DATE_PROPERTY).getValue().toString())));
+                return event;
+            }
+        };
+
+        firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int eventsCount = firebaseRecyclerAdapter.getItemCount();
+                int lastVisiblePostion = mLinearLayoutManager.findLastCompletelyVisibleItemPosition();
+                if ( lastVisiblePostion == -1 || (positionStart >= (eventsCount -1) && lastVisiblePostion == (positionStart -1 ))) {
+                    mEventRecyclerView.scrollToPosition(positionStart);
+                }
+            }
+        });
+        mEventRecyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
     private void addEvent(){
@@ -77,49 +114,7 @@ public class MainActivity extends RoboActionBarActivity {
     }
     @Override
     protected void onResume() {
-        events=new ArrayList<>();
         super.onResume();
-        listView.setAdapter(eventListAdapter);
-        DatabaseReference eventsReference=databaseReference.child("events");
-        eventsReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Event event=new Event();
-                event.setName(dataSnapshot.child(Event.NAME_PROPERTY).getValue().toString());
-                event.setDescription(dataSnapshot.child(Event.DESCRIPTION_PROPERTY).getValue().toString());
-                event.setLocation(dataSnapshot.child(Event.LOCATION_PROPERTY).getValue().toString());
-                event.setEventId(dataSnapshot.child(Event.EVENT_ID_PROPERTY).getValue().toString());
-                if(dataSnapshot.child(Event.START_DATE_PROPERTY).getValue()!=null){
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(Long.parseLong(dataSnapshot.child(Event.START_DATE_PROPERTY).getValue().toString()));
-                    event.setStartDate(calendar.getTime());
-                }
-
-                events.add(event);
-                eventListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,36 +163,17 @@ public class MainActivity extends RoboActionBarActivity {
     private void signOut(){
         firebaseAuth.signOut();
     }
-    class EventListAdapter extends BaseAdapter {
-        @Override
-        public int getCount() {
-            return events.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return events.get(i);
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            LayoutInflater layoutInflater = getLayoutInflater();
-            View eventRow = layoutInflater.inflate(R.layout.event_row,null);
-            TextView eventName = (TextView)eventRow.findViewById(R.id.eventName);
-            Event event = (Event) getItem(i);
-            eventName.setText(event.getName());
-            TextView eventDate = (TextView)eventRow.findViewById(R.id.eventDate);
-            eventDate.setText(simpleDateFormat.format(event.getStartDate()));
-            TextView eventLocation = (TextView)eventRow.findViewById(R.id.eventLocation);
-            eventLocation.setText(event.getLocation());
-            TextView eventDescription = (TextView)eventRow.findViewById(R.id.eventDescription);
-            eventDescription.setText(event.getDescription());
-            return eventRow;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
+    public static class EventViewHolder extends RecyclerView.ViewHolder {
+        TextView eventName;
+        TextView eventDate;
+        TextView eventLocation;
+        TextView eventDescription;
+        public EventViewHolder(View v){
+            super(v);
+            eventName = (TextView)itemView.findViewById(R.id.eventName);
+            eventDate = (TextView)itemView.findViewById(R.id.eventDate);
+            eventLocation = (TextView)itemView.findViewById(R.id.eventLocation);
+            eventDescription = (TextView)itemView.findViewById(R.id.eventDescription);
         }
     }
 }

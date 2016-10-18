@@ -66,10 +66,11 @@ public class SignUpUI extends DialogFragment {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Sign Up successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Sign Up successful", Toast.LENGTH_SHORT).show();
                         dismiss();
                     }else{
-                        Toast.makeText(getContext(), "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Exception exception = task.getException();
+                        Toast.makeText(getActivity().getApplicationContext(), "Error: "+(exception != null ? exception.getMessage() : "Unknow error"), Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -77,8 +78,8 @@ public class SignUpUI extends DialogFragment {
         }else{
             if(!isEmailValid()){
                 Toast.makeText(getContext(), "Entered email is invalid", Toast.LENGTH_SHORT).show();
-            }else if(isEmailValid()){
-                Toast.makeText(getContext(), "Entered password is invalid", Toast.LENGTH_SHORT).show();
+            }else if(!isPasswordValid()){
+                Toast.makeText(getContext(), "Entered password is invalid. Should be at least 3 characters.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -87,7 +88,6 @@ public class SignUpUI extends DialogFragment {
     }
     private boolean isEmailValid(){
         return !emailAutoCompleteTextView.getText().toString().isEmpty();
-        //&& emailAutoCompleteTextView.getText().toString();
     }
     private boolean  isPasswordValid(){
         return !passwordEditText.getText().toString().isEmpty() && passwordEditText.getText().toString().length()>6;

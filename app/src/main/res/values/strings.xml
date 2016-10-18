@@ -18,4 +18,13 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="date">Date</string>
+    <string name="description">Description</string>
+    <string name="name">Name</string>
+    <string name="location">Location</string>
+    <string name="start_date">Start Date</string>
+    <string name="location_hint">location</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_up">Sign Up</string>
 </resources>

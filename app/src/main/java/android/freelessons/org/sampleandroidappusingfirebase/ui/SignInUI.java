@@ -66,11 +66,10 @@ public class SignInUI extends DialogFragment {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(getContext(), "Sign in successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Sign in successful", Toast.LENGTH_SHORT).show();
                         dismiss();
                     }else{
-                        Toast.makeText(getContext(), "Error: ", Toast.LENGTH_SHORT).show();
-
+                        Toast.makeText(getActivity().getApplicationContext(), "Error: ", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

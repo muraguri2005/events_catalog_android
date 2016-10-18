@@ -10,24 +10,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="android.freelessons.org.sampleandroidappusingfirebase.MainActivity">
-
-
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/eventRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="@string/events_title"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:id="@+id/eventsTitle"/>
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomView"/>
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/eventsList"
-        android:layout_above="@+id/bottomView"
-        android:layout_below="@+id/addEvent" >
-
-    </ListView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,29 +24,37 @@
         android:id="@+id/bottomView"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_white"
+            app:elevation="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="end|top" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Sign Up"
-            android:id="@+id/signUp" android:visibility="gone"/>
+            android:text="@string/sign_up"
+            android:id="@+id/signUp"
+            android:visibility="invisible"
+            style="?android:attr/buttonBarButtonStyle"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Sign In"
-            android:id="@+id/signIn" android:visibility="gone"/>
+            android:text="@string/sign_in"
+            android:id="@+id/signIn"
+            android:visibility="invisible"
+            style="?android:attr/buttonBarButtonStyle"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Sign Out"
-            android:id="@+id/signOut" android:visibility="gone"/>
+            android:text="@string/sign_out"
+            android:id="@+id/signOut"
+            android:visibility="invisible"
+            style="?android:attr/buttonBarButtonStyle"/>
+
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addEvent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_white"
-        android:layout_gravity="bottom|end"
-        app:elevation="4dp"
-        android:layout_marginBottom="2dp" />
+
 </RelativeLayout>
