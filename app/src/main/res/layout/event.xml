@@ -8,63 +8,62 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/event_name_title"
-        android:id="@+id/nameTextView"
-        android:layout_gravity="center_horizontal" />
 
-    <EditText
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/nameEditText"
-        android:hint="@string/event_name_title"/>
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/event_description_title"
-        android:id="@+id/descriptionTextView"
-        android:layout_gravity="center_horizontal" />
+        <EditText
+            android:id="@+id/nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/event_name_title"
+            android:imeActionLabel="@string/event_name_title"
+            android:imeOptions="actionUnspecified"
+            android:inputType="text"
+            android:maxLines="1"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/descriptionEditText"
-        android:hint="@string/event_description_title"
-        android:layout_gravity="center_horizontal" />
+    </android.support.design.widget.TextInputLayout>
 
-    <TextView
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/location"
-        android:id="@+id/locationTextView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/locationEditText"
-        android:hint="@string/location_hint"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/start_date"
-        android:id="@+id/startDateTextView"
-        android:layout_gravity="center_horizontal"/>
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/event_description_title"
+            android:inputType="text"/>
 
-    <EditText
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/startDateEditText"
-        android:hint="@string/start_date" android:inputType="date"/>
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/locationEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/location_hint"
+            android:inputType="text"/>
+
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/startDateEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/start_date"
+            android:inputType="date"
+            android:maxLines="1"/>
+
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:layout_width="match_parent"

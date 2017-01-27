@@ -1,11 +1,11 @@
 package android.freelessons.org.sampleandroidappusingfirebase.ui;
 
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.freelessons.org.sampleandroidappusingfirebase.R;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -54,7 +55,7 @@ public class EventActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         databaseReference= FirebaseDatabase.getInstance().getReference();
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -112,7 +113,10 @@ public class EventActivity extends RoboActionBarActivity {
         event.setDescription(descriptionEditText.getText().toString());
         event.setLocation(locationEditText.getText().toString());
         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            event.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser!=null) {
+                event.setUserId(firebaseUser.getUid());
+            }
         }
         try {
             event.setStartDate(dateFormat.parse(startDateEditText.getText().toString()));
@@ -129,7 +133,12 @@ public class EventActivity extends RoboActionBarActivity {
                     Toast.makeText(EventActivity.this, "Event Created successfully", Toast.LENGTH_SHORT).show();
                 }else{
                     Log.e(TAG,"erro");
-                    Toast.makeText(EventActivity.this, "Error creating Event "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    String errorMessage = null;
+                    Exception exception = task.getException();
+                    if (exception!=null) {
+                        errorMessage = exception.getMessage();
+                    }
+                    Toast.makeText(EventActivity.this, "Error creating Event "+errorMessage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
