@@ -176,4 +176,10 @@ public class MainActivity extends RoboActionBarActivity {
             eventDescription = (TextView)itemView.findViewById(R.id.eventDescription);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firebaseRecyclerAdapter.cleanup();
+    }
 }
