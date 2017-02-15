@@ -84,7 +84,7 @@ public class MainActivity extends RoboActionBarActivity {
                 if(snapshot.child(Event.LOCATION_PROPERTY).getValue() != null)
                     event.setLocation(snapshot.child(Event.LOCATION_PROPERTY).getValue().toString());
                 if(snapshot.child(Event.START_DATE_PROPERTY).getValue() != null)
-                    event.setStartDate(new Date(Long.parseLong(snapshot.child(Event.START_DATE_PROPERTY).getValue().toString())));
+                    event.setStartDate(new Date((long) Double.parseDouble(snapshot.child(Event.START_DATE_PROPERTY).getValue().toString())));
                 return event;
             }
         };
