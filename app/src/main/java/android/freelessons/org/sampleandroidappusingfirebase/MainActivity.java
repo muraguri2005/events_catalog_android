@@ -3,9 +3,11 @@ package android.freelessons.org.sampleandroidappusingfirebase;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
+import android.freelessons.org.sampleandroidappusingfirebase.session.SessionManager;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.EventActivity;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.SignInUI;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.SignUpUI;
+import android.freelessons.org.sampleandroidappusingfirebase.util.EventUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -23,7 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import roboguice.activity.RoboActionBarActivity;
@@ -48,10 +49,12 @@ public class MainActivity extends RoboActionBarActivity {
 
     FirebaseRecyclerAdapter<Event,EventViewHolder> firebaseRecyclerAdapter;
     LinearLayoutManager mLinearLayoutManager;
+    SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager(this);
         databaseReference=FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuthStateListener=new FirebaseAuth.AuthStateListener() {
@@ -67,25 +70,22 @@ public class MainActivity extends RoboActionBarActivity {
 
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(Event.class,R.layout.event_item,EventViewHolder.class,databaseReference.child(EVENTS_CHILD)) {
             @Override
-            protected void populateViewHolder(EventViewHolder viewHolder, Event event, int position) {
+            protected void populateViewHolder(EventViewHolder viewHolder, final Event event, int position) {
                 viewHolder.eventDate.setText(simpleDateFormat.format(event.getStartDate()));
                 viewHolder.eventDescription.setText(event.getDescription());
                 viewHolder.eventLocation.setText(event.getLocation());
                 viewHolder.eventName.setText(event.getName());
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addEvent(event);
+                    }
+                });
             }
 
             @Override
             protected Event parseSnapshot(DataSnapshot snapshot) {
-                Event event = new Event();
-                if(snapshot.child(Event.NAME_PROPERTY).getValue() != null)
-                    event.setName(snapshot.child(Event.NAME_PROPERTY).getValue().toString());
-                if(snapshot.child(Event.DESCRIPTION_PROPERTY).getValue() != null)
-                    event.setDescription(snapshot.child(Event.DESCRIPTION_PROPERTY).getValue().toString());
-                if(snapshot.child(Event.LOCATION_PROPERTY).getValue() != null)
-                    event.setLocation(snapshot.child(Event.LOCATION_PROPERTY).getValue().toString());
-                if(snapshot.child(Event.START_DATE_PROPERTY).getValue() != null)
-                    event.setStartDate(new Date((long) Double.parseDouble(snapshot.child(Event.START_DATE_PROPERTY).getValue().toString())));
-                return event;
+               return EventUtil.parseSnaphot(snapshot);
             }
         };
 
@@ -103,14 +103,14 @@ public class MainActivity extends RoboActionBarActivity {
         mEventRecyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
-    private void addEvent(){
+    private void addEvent(Event event){
+        sessionManager.saveEvent(event);
         if(firebaseAuth.getCurrentUser()!=null){
             Intent intent=new Intent(getApplicationContext(),EventActivity.class);
             startActivity(intent);
         }else{
             Toast.makeText(MainActivity.this, "Please sign in to create an event", Toast.LENGTH_SHORT).show();
         }
-
     }
     @Override
     protected void onResume() {
@@ -118,7 +118,7 @@ public class MainActivity extends RoboActionBarActivity {
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addEvent();
+                addEvent(new Event());
             }
         });
         signIn.setOnClickListener(new View.OnClickListener() {
@@ -163,7 +163,7 @@ public class MainActivity extends RoboActionBarActivity {
     private void signOut(){
         firebaseAuth.signOut();
     }
-    public static class EventViewHolder extends RecyclerView.ViewHolder {
+    private static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView eventName;
         TextView eventDate;
         TextView eventLocation;

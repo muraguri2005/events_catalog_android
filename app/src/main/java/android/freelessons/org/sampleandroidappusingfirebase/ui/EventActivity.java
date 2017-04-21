@@ -3,6 +3,8 @@ package android.freelessons.org.sampleandroidappusingfirebase.ui;
 import android.app.DatePickerDialog;
 import android.freelessons.org.sampleandroidappusingfirebase.R;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
+import android.freelessons.org.sampleandroidappusingfirebase.session.SessionManager;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -29,6 +31,7 @@ import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
+
 @ContentView(R.layout.event)
 public class EventActivity extends RoboActionBarActivity {
     private static String TAG="SAPWF";
@@ -48,23 +51,44 @@ public class EventActivity extends RoboActionBarActivity {
     @InjectView(R.id.startDateEditText)
     EditText startDateEditText;
 
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
     Calendar myCalendar = Calendar.getInstance();
     Event event = new Event();
+    SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sessionManager = new SessionManager(this);
+        event = sessionManager.getEvent();
+        myCalendar.setTime(event.getStartDate());
         databaseReference= FirebaseDatabase.getInstance().getReference();
         ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateViews();
+    }
+
+    //update views
+    private void updateViews() {
+        nameEditText.setText(event.getName());
+        descriptionEditText.setText(event.getDescription());
+        locationEditText.setText(event.getLocation());
+        startDateEditText.setText(dateFormat.format(event.getStartDate()));
         saveEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,6 +121,9 @@ public class EventActivity extends RoboActionBarActivity {
                 }
             }
         });
+
+
+
     }
     private boolean isValid(){
         return !nameEditText.getText().toString().isEmpty() && !descriptionEditText.getText().toString().isEmpty();
@@ -130,7 +157,7 @@ public class EventActivity extends RoboActionBarActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Log.d(TAG,"Success");
-                    Toast.makeText(EventActivity.this, "Event Created successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
                 }else{
                     Log.e(TAG,"erro");
                     String errorMessage = null;
@@ -138,7 +165,7 @@ public class EventActivity extends RoboActionBarActivity {
                     if (exception!=null) {
                         errorMessage = exception.getMessage();
                     }
-                    Toast.makeText(EventActivity.this, "Error creating Event "+errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EventActivity.this, "Error saving Event "+errorMessage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
