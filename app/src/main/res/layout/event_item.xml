@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/eventName"
+        android:id="@+id/eventTitle"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:text="@string/event_name_title"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/eventDescription"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:text="@string/event_description_title"
-        />
+        android:text="@string/event_title"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_report_image"
+            android:contentDescription="event image" />
+
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="0.5"
+            android:layout_weight="0.8"
             android:layout_height="wrap_content"
-            android:id="@+id/eventLocation"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:text="@string/location"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:id="@+id/eventDate"
+            android:id="@+id/eventDescription"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:text="@string/date"
-            android:textStyle="italic|bold"/>
+            android:text="@string/event_description_title"
+            />
     </LinearLayout>
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:background="@android:drawable/screen_background_dark_transparent" />
+
 </LinearLayout>

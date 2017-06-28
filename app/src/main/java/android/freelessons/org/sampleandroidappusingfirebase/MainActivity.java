@@ -71,14 +71,12 @@ public class MainActivity extends RoboActionBarActivity {
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(Event.class,R.layout.event_item,EventViewHolder.class,databaseReference.child(EVENTS_CHILD)) {
             @Override
             protected void populateViewHolder(EventViewHolder viewHolder, final Event event, int position) {
-                viewHolder.eventDate.setText(simpleDateFormat.format(event.getStartDate()));
+                viewHolder.eventTitle.setText(getString(R.string.event_title,event.getName(),simpleDateFormat.format(event.getStartDate()),event.getLocation()));
                 viewHolder.eventDescription.setText(event.getDescription());
-                viewHolder.eventLocation.setText(event.getLocation());
-                viewHolder.eventName.setText(event.getName());
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        addEvent(event);
+                        editEvent(event);
                     }
                 });
             }
@@ -110,6 +108,15 @@ public class MainActivity extends RoboActionBarActivity {
             startActivity(intent);
         }else{
             Toast.makeText(MainActivity.this, "Please sign in to create an event", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void editEvent(Event event){
+        sessionManager.saveEvent(event);
+        if(firebaseAuth.getCurrentUser()!=null){
+            Intent intent=new Intent(getApplicationContext(),EventActivity.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(MainActivity.this, "Please sign in to edit the event", Toast.LENGTH_SHORT).show();
         }
     }
     @Override
@@ -164,15 +171,11 @@ public class MainActivity extends RoboActionBarActivity {
         firebaseAuth.signOut();
     }
     private static class EventViewHolder extends RecyclerView.ViewHolder {
-        TextView eventName;
-        TextView eventDate;
-        TextView eventLocation;
+        TextView eventTitle;
         TextView eventDescription;
         public EventViewHolder(View v){
             super(v);
-            eventName = (TextView)itemView.findViewById(R.id.eventName);
-            eventDate = (TextView)itemView.findViewById(R.id.eventDate);
-            eventLocation = (TextView)itemView.findViewById(R.id.eventLocation);
+            eventTitle = (TextView)itemView.findViewById(R.id.eventTitle);
             eventDescription = (TextView)itemView.findViewById(R.id.eventDescription);
         }
     }

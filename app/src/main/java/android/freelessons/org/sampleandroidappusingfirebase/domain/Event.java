@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
-    String eventId;
-    String name;
-    String description;
-    String location;
-    Date startDate=new Date();
-    double duration;
-    String durationType;
-    String userId;
+    private String eventId;
+    private String name;
+    private String description;
+    private String location;
+    private Date startDate=new Date();
+    private double duration;
+    private String durationType;
+    private String userId;
 
     public String getEventId() {
         return eventId;

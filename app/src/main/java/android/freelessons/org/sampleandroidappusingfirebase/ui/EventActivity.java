@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.freelessons.org.sampleandroidappusingfirebase.R;
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
 import android.freelessons.org.sampleandroidappusingfirebase.session.SessionManager;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
@@ -15,6 +14,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +55,9 @@ public class EventActivity extends RoboActionBarActivity {
     EditText startDateEditText;
 
 
+    PlaceAutocompleteFragment locationView;
+
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
     Calendar myCalendar = Calendar.getInstance();
     Event event = new Event();
@@ -67,7 +73,23 @@ public class EventActivity extends RoboActionBarActivity {
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        locationView = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.locationView);
+        locationView.setText("Search Location");
+        locationView.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Log.d(TAG,"Place:"+place.getName());
+                Log.d(TAG,"Latitude:"+place.getLatLng().latitude);
+                Log.d(TAG,"Longitude:"+place.getLatLng().longitude);
+                locationEditText.setText(place.getName());
+            }
 
+            @Override
+            public void onError(Status status) {
+                Log.e(TAG,"Error: "+status);
+            }
+
+        });
 
     }
 
