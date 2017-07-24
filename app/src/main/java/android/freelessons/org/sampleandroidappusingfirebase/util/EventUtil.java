@@ -19,6 +19,8 @@ public class EventUtil {
         if(snapshot.child(Event.START_DATE_PROPERTY).getValue() != null)
             event.setStartDate(new Date((long) Double.parseDouble(snapshot.child(Event.START_DATE_PROPERTY).getValue().toString())));
         event.setEventId(snapshot.getKey());
+        if(snapshot.child(Event.POSTER_PATH).getValue() != null)
+            event.setPosterPath(snapshot.child(Event.POSTER_PATH).getValue().toString());
         return event;
     }
 }

@@ -13,6 +13,7 @@ public class Event {
     private double duration;
     private String durationType;
     private String userId;
+    private String posterPath;
 
     public String getEventId() {
         return eventId;
@@ -78,6 +79,15 @@ public class Event {
         this.userId = userId;
     }
 
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
     public static String EVENT_ID_PROPERTY="eventid";
     public static String NAME_PROPERTY="name";
     public static String DESCRIPTION_PROPERTY="description";
@@ -86,6 +96,7 @@ public class Event {
     public static String  DURATION_PROPERTY="duration";
     public static String  DURATION_TYPE_PROPERTY="durationtype";
     public static String USER_ID_PROPERTY="userid";
+    public static String POSTER_PATH="poster_path";
     public Map<String,Object> toMap(){
         Map<String,Object> eventMap=new HashMap<>();
         eventMap.put(EVENT_ID_PROPERTY,eventId);
@@ -96,6 +107,7 @@ public class Event {
         eventMap.put(DURATION_PROPERTY,duration);
         eventMap.put(DURATION_TYPE_PROPERTY,durationType);
         eventMap.put(USER_ID_PROPERTY,userId);
+        eventMap.put(POSTER_PATH,posterPath);
         return eventMap;
     }
 }

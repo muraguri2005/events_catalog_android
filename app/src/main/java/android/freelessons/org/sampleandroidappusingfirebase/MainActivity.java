@@ -8,6 +8,7 @@ import android.freelessons.org.sampleandroidappusingfirebase.ui.EventActivity;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.SignInUI;
 import android.freelessons.org.sampleandroidappusingfirebase.ui.SignUpUI;
 import android.freelessons.org.sampleandroidappusingfirebase.util.EventUtil;
+import android.freelessons.org.sampleandroidappusingfirebase.util.ImageRequester;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,9 +16,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -73,6 +76,8 @@ public class MainActivity extends RoboActionBarActivity {
             protected void populateViewHolder(EventViewHolder viewHolder, final Event event, int position) {
                 viewHolder.eventTitle.setText(getString(R.string.event_title,event.getName(),simpleDateFormat.format(event.getStartDate()),event.getLocation()));
                 viewHolder.eventDescription.setText(event.getDescription());
+                ImageRequester imageRequester = ImageRequester.getInstance(getBaseContext());
+                imageRequester.setImageFromUrl(viewHolder.poster,event.getPosterPath());
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -173,10 +178,12 @@ public class MainActivity extends RoboActionBarActivity {
     private static class EventViewHolder extends RecyclerView.ViewHolder {
         TextView eventTitle;
         TextView eventDescription;
+        NetworkImageView poster;
         public EventViewHolder(View v){
             super(v);
             eventTitle = (TextView)itemView.findViewById(R.id.eventTitle);
             eventDescription = (TextView)itemView.findViewById(R.id.eventDescription);
+            poster = (NetworkImageView) itemView.findViewById(R.id.imageView);
         }
     }
 
