@@ -12,16 +12,20 @@ import android.freelessons.org.sampleandroidappusingfirebase.util.ImageRequester
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -30,21 +34,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
+//import roboguice.inject.ContentView;
+//import roboguice.inject.InjectView;
 
-@ContentView(R.layout.activity_main)
-public class MainActivity extends RoboActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private static final String EVENTS_CHILD = "events";
-    @InjectView(R.id.eventRecyclerView) RecyclerView mEventRecyclerView;
-    @InjectView(R.id.addEvent)
+    RecyclerView mEventRecyclerView;
     FloatingActionButton addEvent;
-    @InjectView(R.id.signIn)
     Button signIn;
-    @InjectView(R.id.signUp) Button signUp;
-    @InjectView(R.id.signOut) Button signOut;
+    Button signUp;
+    Button signOut;
     DatabaseReference databaseReference;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
     FirebaseAuth firebaseAuth;
@@ -57,6 +57,7 @@ public class MainActivity extends RoboActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         sessionManager = new SessionManager(this);
         databaseReference=FirebaseDatabase.getInstance().getReference();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -68,12 +69,33 @@ public class MainActivity extends RoboActionBarActivity {
         };
         firebaseAuth.addAuthStateListener(firebaseAuthStateListener);
 
+        mEventRecyclerView = findViewById(R.id.eventRecyclerView);
+        addEvent = findViewById(R.id.addEvent);
+        signIn = findViewById(R.id.signIn);
+        signOut = findViewById(R.id.signOut);
+        signUp = findViewById(R.id.signUp);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mEventRecyclerView.setLayoutManager(mLinearLayoutManager);
+        FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>()
+                .setQuery(databaseReference.child(EVENTS_CHILD), new SnapshotParser<Event>() {
+                    @NonNull
+                    @Override
+                    public Event parseSnapshot(@NonNull DataSnapshot snapshot) {
+                        return EventUtil.parseSnaphot(snapshot);
+                    }
+                }).build();
 
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(Event.class,R.layout.event_item,EventViewHolder.class,databaseReference.child(EVENTS_CHILD)) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(options) {
+            @NonNull
             @Override
-            protected void populateViewHolder(EventViewHolder viewHolder, final Event event, int position) {
+            public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.event_item, parent, false);
+                return new EventViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull EventViewHolder viewHolder, int position, @NonNull final Event event) {
                 viewHolder.eventTitle.setText(getString(R.string.event_title,event.getName(),simpleDateFormat.format(event.getStartDate()),event.getLocation()));
                 viewHolder.eventDescription.setText(event.getDescription());
                 ImageRequester imageRequester = ImageRequester.getInstance(getBaseContext());
@@ -86,11 +108,11 @@ public class MainActivity extends RoboActionBarActivity {
                 });
             }
 
-            @Override
-            protected Event parseSnapshot(DataSnapshot snapshot) {
-               return EventUtil.parseSnaphot(snapshot);
-            }
+
+
         };
+
+
 
         firebaseRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -181,15 +203,21 @@ public class MainActivity extends RoboActionBarActivity {
         NetworkImageView poster;
         public EventViewHolder(View v){
             super(v);
-            eventTitle = (TextView)itemView.findViewById(R.id.eventTitle);
-            eventDescription = (TextView)itemView.findViewById(R.id.eventDescription);
-            poster = (NetworkImageView) itemView.findViewById(R.id.imageView);
+            eventTitle = itemView.findViewById(R.id.eventTitle);
+            eventDescription = itemView.findViewById(R.id.eventDescription);
+            poster =  itemView.findViewById(R.id.imageView);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseRecyclerAdapter.startListening();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        firebaseRecyclerAdapter.cleanup();
+        firebaseRecyclerAdapter.stopListening();
     }
 }

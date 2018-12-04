@@ -7,6 +7,7 @@ import android.freelessons.org.sampleandroidappusingfirebase.session.SessionMana
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,31 +31,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
 
 
-@ContentView(R.layout.event)
-public class EventActivity extends RoboActionBarActivity {
+public class EventActivity extends AppCompatActivity {
     private static String TAG="SAPWF";
     DatabaseReference databaseReference;
-    @InjectView(R.id.nameEditText)
     EditText nameEditText;
-
-    @InjectView(R.id.descriptionEditText)
     EditText descriptionEditText;
-
-    @InjectView(R.id.saveEvent)
     Button saveEvent;
-
-    @InjectView(R.id.locationEditText)
     EditText locationEditText;
-
-    @InjectView(R.id.startDateEditText)
     EditText startDateEditText;
-
-
     PlaceAutocompleteFragment locationView;
 
 
@@ -65,6 +51,12 @@ public class EventActivity extends RoboActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.event);
+        startDateEditText = findViewById(R.id.startDateEditText);
+        locationEditText = findViewById(R.id.locationEditText);
+        saveEvent = findViewById(R.id.saveEvent);
+        descriptionEditText = findViewById(R.id.descriptionEditText);
+        nameEditText = findViewById(R.id.nameEditText);
         sessionManager = new SessionManager(this);
         event = sessionManager.getEvent();
         myCalendar.setTime(event.getStartDate());
