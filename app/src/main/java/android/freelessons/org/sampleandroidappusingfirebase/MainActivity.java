@@ -26,6 +26,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -34,8 +35,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-//import roboguice.inject.ContentView;
-//import roboguice.inject.InjectView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -149,30 +148,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        addEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addEvent(new Event());
-            }
-        });
-        signIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
-        signUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signUp();
-            }
-        });
-        signOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
-            }
-        });
+        addEvent.setOnClickListener(view -> addEvent(new Event()));
+        signIn.setOnClickListener(view -> signIn());
+        signUp.setOnClickListener(view -> signUp());
+        signOut.setOnClickListener(view -> signOut());
         updateViews();
     }
     private void updateViews(){
