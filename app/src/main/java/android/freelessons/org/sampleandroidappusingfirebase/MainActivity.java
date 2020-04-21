@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         TextView eventTitle;
         TextView eventDescription;
         NetworkImageView poster;
-        public EventViewHolder(View v){
+        EventViewHolder(View v){
             super(v);
             eventTitle = itemView.findViewById(R.id.eventTitle);
             eventDescription = itemView.findViewById(R.id.eventDescription);

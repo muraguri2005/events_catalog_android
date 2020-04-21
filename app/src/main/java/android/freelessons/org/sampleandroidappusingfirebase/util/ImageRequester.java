@@ -15,12 +15,11 @@ import com.android.volley.toolbox.Volley;
  */
 
 public class ImageRequester {
-    private RequestQueue requestQueue;
     private ImageLoader imageLoader;
     private int maxByteSize;
-    public ImageRequester(Context context){
-        this.requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-        this.requestQueue.start();
+    private ImageRequester(Context context){
+        RequestQueue requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        requestQueue.start();
         this.maxByteSize = calculateMaxByteSize(context);
         this.imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
             private LruCache<String,Bitmap> lruCache =  new LruCache(maxByteSize){
