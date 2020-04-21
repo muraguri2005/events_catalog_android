@@ -5,9 +5,8 @@ import android.app.DialogFragment;
 import android.freelessons.org.sampleandroidappusingfirebase.R;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -53,17 +56,14 @@ public class SignInUI extends DialogFragment {
         }
     }
 
+
     private void findViews(View rootView){
         signInButton=(Button)rootView.findViewById(R.id.email_sign_in);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
-        emailAutoCompleteTextView=(AutoCompleteTextView)rootView.findViewById(R.id.email);
-        passwordEditText=(EditText)rootView.findViewById(R.id.password);
+        signInButton.setOnClickListener(view -> signIn());
+        emailAutoCompleteTextView= rootView.findViewById(R.id.email);
+        passwordEditText= rootView.findViewById(R.id.password);
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void signIn(){
         if(inputValid()) {
             firebaseAuth.signInWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
