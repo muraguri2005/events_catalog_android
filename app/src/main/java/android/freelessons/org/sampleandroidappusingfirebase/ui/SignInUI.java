@@ -16,13 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -66,15 +62,12 @@ public class SignInUI extends DialogFragment {
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void signIn(){
         if(inputValid()) {
-            firebaseAuth.signInWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Sign in successful", Toast.LENGTH_SHORT).show();
-                        dismiss();
-                    }else{
-                        Toast.makeText(getActivity().getApplicationContext(), "Error: ", Toast.LENGTH_SHORT).show();
-                    }
+            firebaseAuth.signInWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Sign in successful", Toast.LENGTH_SHORT).show();
+                    dismiss();
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "Error: ", Toast.LENGTH_SHORT).show();
                 }
             });
         }else{

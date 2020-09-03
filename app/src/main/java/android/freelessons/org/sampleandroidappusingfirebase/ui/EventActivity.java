@@ -6,9 +6,7 @@ import android.freelessons.org.sampleandroidappusingfirebase.domain.Event;
 import android.freelessons.org.sampleandroidappusingfirebase.session.SessionManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,11 +15,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -42,7 +40,7 @@ public class EventActivity extends AppCompatActivity {
     Button saveEvent;
     EditText locationEditText;
     EditText startDateEditText;
-    PlaceAutocompleteFragment locationView;
+    AutocompleteSupportFragment locationView;
 
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
@@ -66,23 +64,31 @@ public class EventActivity extends AppCompatActivity {
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        locationView = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.locationView);
-        locationView.setText("Search Location");
-        locationView.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                Log.d(TAG,"Place:"+place.getName());
-                Log.d(TAG,"Latitude:"+place.getLatLng().latitude);
-                Log.d(TAG,"Longitude:"+place.getLatLng().longitude);
-                locationEditText.setText(place.getName());
-            }
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), "YOUR_API_KEY");
+        }
+        locationView =  (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.locationView);
+        if (locationView != null) {
+            locationView.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+            locationView.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(@NonNull Place place) {
+                    Log.d(TAG,"Place:"+place.getName());
+                    if (place.getLatLng()!=null) {
+                        Log.d(TAG, "Latitude:" + place.getLatLng().latitude);
+                        Log.d(TAG, "Longitude:" + place.getLatLng().longitude);
+                    }
+                    locationEditText.setText(place.getName());
+                }
 
-            @Override
-            public void onError(Status status) {
-                Log.e(TAG,"Error: "+status);
-            }
+                @Override
+                public void onError(@NonNull Status status) {
+                    Log.e(TAG,"Error: "+status);
+                }
 
-        });
+            });
+        }
+
 
     }
 
@@ -104,36 +110,24 @@ public class EventActivity extends AppCompatActivity {
         descriptionEditText.setText(event.getDescription());
         locationEditText.setText(event.getLocation());
         startDateEditText.setText(dateFormat.format(event.getStartDate()));
-        saveEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isValid()) {
-                    saveEvent();
-                }else{
-                    Toast.makeText(getApplicationContext(),"Please make sure all fields are filled",Toast.LENGTH_LONG).show();
-                }
+        saveEvent.setOnClickListener(view -> {
+            if(isValid()) {
+                saveEvent();
+            }else{
+                Toast.makeText(getApplicationContext(),"Please make sure all fields are filled",Toast.LENGTH_LONG).show();
             }
         });
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
-            }
-
+        final DatePickerDialog.OnDateSetListener date = (view, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabel();
         };
-        startDateEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
-                    new DatePickerDialog(EventActivity.this, date, myCalendar
-                            .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-                }
+        startDateEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus){
+                new DatePickerDialog(EventActivity.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
@@ -167,21 +161,18 @@ public class EventActivity extends AppCompatActivity {
             //e.printStackTrace();
         }
 
-        eventReference.updateChildren(event.toMap()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    Log.d(TAG,"Success");
-                    Toast.makeText(EventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
-                }else{
-                    Log.e(TAG,"erro");
-                    String errorMessage = null;
-                    Exception exception = task.getException();
-                    if (exception!=null) {
-                        errorMessage = exception.getMessage();
-                    }
-                    Toast.makeText(EventActivity.this, "Error saving Event "+errorMessage, Toast.LENGTH_SHORT).show();
+        eventReference.updateChildren(event.toMap()).addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                Log.d(TAG,"Success");
+                Toast.makeText(EventActivity.this, "Event saved successfully", Toast.LENGTH_SHORT).show();
+            }else{
+                Log.e(TAG,"erro");
+                String errorMessage = null;
+                Exception exception = task.getException();
+                if (exception!=null) {
+                    errorMessage = exception.getMessage();
                 }
+                Toast.makeText(EventActivity.this, "Error saving Event "+errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -15,12 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 
@@ -55,29 +51,21 @@ public class SignUpUI extends DialogFragment {
         }
     }
     private void findViews(View rootView){
-        signUpButton=(Button)rootView.findViewById(R.id.email_sign_up);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signUp();
-            }
-        });
-        emailAutoCompleteTextView=(AutoCompleteTextView)rootView.findViewById(R.id.email);
-        passwordEditText=(EditText)rootView.findViewById(R.id.password);
+        signUpButton= rootView.findViewById(R.id.email_sign_up);
+        signUpButton.setOnClickListener(view -> signUp());
+        emailAutoCompleteTextView= rootView.findViewById(R.id.email);
+        passwordEditText= rootView.findViewById(R.id.password);
     }
     private void signUp(){
         if(inputValid()) {
-            firebaseAuth.createUserWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Sign Up successful", Toast.LENGTH_SHORT).show();
-                        dismiss();
-                    }else{
-                        Exception exception = task.getException();
-                        Toast.makeText(getActivity().getApplicationContext(), "Error: "+(exception != null ? exception.getMessage() : "Unknow error"), Toast.LENGTH_SHORT).show();
+            firebaseAuth.createUserWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getActivity().getApplicationContext(), "Sign Up successful", Toast.LENGTH_SHORT).show();
+                    dismiss();
+                }else{
+                    Exception exception = task.getException();
+                    Toast.makeText(getActivity().getApplicationContext(), "Error: "+(exception != null ? exception.getMessage() : "Unknow error"), Toast.LENGTH_SHORT).show();
 
-                    }
                 }
             });
         }else{

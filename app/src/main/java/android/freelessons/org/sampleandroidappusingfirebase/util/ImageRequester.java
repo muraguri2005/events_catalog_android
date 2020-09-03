@@ -22,10 +22,10 @@ public class ImageRequester {
         requestQueue.start();
         this.maxByteSize = calculateMaxByteSize(context);
         this.imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
-            private LruCache<String,Bitmap> lruCache =  new LruCache(maxByteSize){
+            private LruCache<String,Bitmap> lruCache =  new LruCache<String,Bitmap>(maxByteSize){
                 @Override
-                protected int sizeOf(Object key, Object value) {
-                    return ((Bitmap)value).getByteCount();
+                protected int sizeOf(String key, Bitmap value) {
+                    return value.getByteCount();
                 }
             };
             @Override
