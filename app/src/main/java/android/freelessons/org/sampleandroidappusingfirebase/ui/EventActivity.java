@@ -33,7 +33,7 @@ import java.util.Locale;
 
 
 public class EventActivity extends AppCompatActivity {
-    private static String TAG="SAPWF";
+    private static final String TAG="SAPWF";
     DatabaseReference databaseReference;
     EditText nameEditText;
     EditText descriptionEditText;
