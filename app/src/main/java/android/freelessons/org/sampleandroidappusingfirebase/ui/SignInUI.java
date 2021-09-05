@@ -30,6 +30,7 @@ public class SignInUI extends DialogFragment {
     public static SignInUI newInstance(){
         return new SignInUI();
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class SignInUI extends DialogFragment {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void findViews(View rootView){
         signInButton=(Button)rootView.findViewById(R.id.email_sign_in);
         signInButton.setOnClickListener(view -> signIn());

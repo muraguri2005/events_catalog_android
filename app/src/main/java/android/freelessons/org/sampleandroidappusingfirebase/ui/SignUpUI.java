@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.freelessons.org.sampleandroidappusingfirebase.R;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -29,6 +31,7 @@ public class SignUpUI extends DialogFragment {
     public static SignUpUI newInstance(){
         return new SignUpUI();
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,12 +53,14 @@ public class SignUpUI extends DialogFragment {
             }
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void findViews(View rootView){
         signUpButton= rootView.findViewById(R.id.email_sign_up);
         signUpButton.setOnClickListener(view -> signUp());
         emailAutoCompleteTextView= rootView.findViewById(R.id.email);
         passwordEditText= rootView.findViewById(R.id.password);
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void signUp(){
         if(inputValid()) {
             firebaseAuth.createUserWithEmailAndPassword(emailAutoCompleteTextView.getText().toString(), passwordEditText.getText().toString()).addOnCompleteListener(task -> {

@@ -10,7 +10,8 @@
         android:name=".SampleFirebaseApplication">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCDhpnYZ-HfDCafFQiVkG6sq2FjQCaIkXI"/>
-        <activity android:name=".MainActivity" android:label="@string/events_title">
+        <activity android:name=".MainActivity" android:label="@string/events_title"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +21,8 @@
         <activity
             android:name=".ui.EventActivity"
             android:parentActivityName=".MainActivity"
-            android:label="Event">
+            android:label="Event"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
