@@ -1,64 +1,64 @@
-package android.freelessons.org.sampleandroidappusingfirebase.util;
+package android.freelessons.org.sampleandroidappusingfirebase.util
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.DisplayMetrics;
-import android.util.LruCache;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.Volley;
+import android.content.Context
+import android.graphics.Bitmap
+import android.util.LruCache
+import com.android.volley.toolbox.ImageLoader
+import com.android.volley.toolbox.NetworkImageView
+import com.android.volley.toolbox.Volley
 
 /**
  * Created by richard on 24/07/2017.
  */
+class ImageRequester private constructor(context: Context) {
+    private val imageLoader: ImageLoader
+    private val maxByteSize: Int
+    fun setImageFromUrl(networkImageView: NetworkImageView, url: String?) {
+        networkImageView.setImageUrl(url, imageLoader)
+    }
 
-public class ImageRequester {
-    private ImageLoader imageLoader;
-    private int maxByteSize;
-    private ImageRequester(Context context){
-        RequestQueue requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-        requestQueue.start();
-        this.maxByteSize = calculateMaxByteSize(context);
-        this.imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
-            private LruCache<String,Bitmap> lruCache =  new LruCache<String,Bitmap>(maxByteSize){
-                @Override
-                protected int sizeOf(String key, Bitmap value) {
-                    return value.getByteCount();
-                }
-            };
-            @Override
-            public Bitmap getBitmap(String url) {
-                return lruCache.get(url);
-            }
+    private fun calculateMaxByteSize(context: Context): Int {
+        val displayMetrics = context.resources.displayMetrics
+        val screenBytes = displayMetrics.widthPixels * displayMetrics.heightPixels * 4
+        return screenBytes * 3
+    }
 
-            @Override
-            public void putBitmap(String url, Bitmap bitmap) {
-                lruCache.put(url,bitmap);
-            }
-        });
-    }
-    public void setImageFromUrl(NetworkImageView networkImageView,String url) {
-        networkImageView.setImageUrl(url,imageLoader);
-    }
-    private int calculateMaxByteSize(Context context){
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int screenBytes = displayMetrics.widthPixels * displayMetrics.heightPixels * 4;
-        return screenBytes * 3;
-    }
-    private static ImageRequester instance = null;
-   public static ImageRequester getInstance(Context context) {
-        ImageRequester result = instance;
-        if (result == null) {
-            synchronized (ImageRequester.class) {
-                result = instance;
-                if (result == null) {
-                    instance = new ImageRequester(context);
-                    result = instance;
+    companion object {
+        private var instance: ImageRequester? = null
+        @JvmStatic
+        fun getInstance(context: Context): ImageRequester? {
+            var result = instance
+            if (result == null) {
+                synchronized(ImageRequester::class.java) {
+                    result = instance
+                    if (result == null) {
+                        instance = ImageRequester(context)
+                        result = instance
+                    }
                 }
             }
+            return result
         }
-        return result;
+    }
+
+    init {
+        val requestQueue = Volley.newRequestQueue(context.applicationContext)
+        requestQueue.start()
+        maxByteSize = calculateMaxByteSize(context)
+        imageLoader = ImageLoader(requestQueue, object : ImageLoader.ImageCache {
+            private val lruCache = object : LruCache<String?, Bitmap>(maxByteSize) {
+                override fun sizeOf(key: String?, value: Bitmap): Int {
+                    return value.byteCount
+                }
+            }
+
+            override fun getBitmap(url: String): Bitmap? {
+                return lruCache[url]
+            }
+
+            override fun putBitmap(url: String, bitmap: Bitmap) {
+                lruCache.put(url, bitmap)
+            }
+        })
     }
 }
