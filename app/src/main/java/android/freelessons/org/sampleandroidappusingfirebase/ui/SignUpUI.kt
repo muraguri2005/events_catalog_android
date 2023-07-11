@@ -22,7 +22,7 @@ class SignUpUI : DialogFragment() {
     private var signUpButton: Button? = null
     private var passwordEditText: EditText? = null
     private var emailAutoCompleteTextView: AutoCompleteTextView? = null
-    var firebaseAuth: FirebaseAuth? = null
+    private var firebaseAuth: FirebaseAuth? = null
     @RequiresApi(api = Build.VERSION_CODES.M)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle): View? {
         val v = inflater.inflate(R.layout.signup, null, false)

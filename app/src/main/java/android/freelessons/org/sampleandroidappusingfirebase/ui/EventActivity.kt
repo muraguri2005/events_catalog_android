@@ -28,17 +28,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class EventActivity : AppCompatActivity() {
-    var databaseReference: DatabaseReference? = null
-    var nameEditText: EditText? = null
+    private var databaseReference: DatabaseReference? = null
+    private var nameEditText: EditText? = null
     private var descriptionEditText: EditText? = null
     private var saveEvent: Button? = null
     var locationEditText: EditText? = null
-    var startDateEditText: EditText? = null
-    var locationView: AutocompleteSupportFragment? = null
-    var dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
-    var myCalendar = Calendar.getInstance()
-    var event = Event()
-    var sessionManager: SessionManager? = null
+    private var startDateEditText: EditText? = null
+    private var locationView: AutocompleteSupportFragment? = null
+    private var dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+    private var myCalendar: Calendar = Calendar.getInstance()
+    private var event = Event()
+    private var sessionManager: SessionManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.event)
@@ -60,7 +60,7 @@ class EventActivity : AppCompatActivity() {
         }
         locationView = supportFragmentManager.findFragmentById(R.id.locationView) as AutocompleteSupportFragment?
         if (locationView != null) {
-            locationView!!.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME))
+            locationView!!.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME))
             locationView!!.setOnPlaceSelectedListener(object : PlaceSelectionListener {
                 override fun onPlaceSelected(place: Place) {
                     Log.d(TAG, "Place:" + place.name)
@@ -76,10 +76,6 @@ class EventActivity : AppCompatActivity() {
                 }
             })
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     override fun onStart() {
@@ -109,7 +105,7 @@ class EventActivity : AppCompatActivity() {
             myCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
             updateLabel()
         }
-        startDateEditText!!.onFocusChangeListener = OnFocusChangeListener { v: View?, hasFocus: Boolean ->
+        startDateEditText!!.onFocusChangeListener = OnFocusChangeListener { _: View?, hasFocus: Boolean ->
             if (hasFocus) {
                 DatePickerDialog(this@EventActivity, date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH],
                         myCalendar[Calendar.DAY_OF_MONTH]).show()
@@ -118,7 +114,8 @@ class EventActivity : AppCompatActivity() {
     }
 
     private val isValid: Boolean
-        get() = !nameEditText!!.text.toString().isEmpty() && !descriptionEditText!!.text.toString().isEmpty()
+        get() = nameEditText!!.text.toString().isNotEmpty() && descriptionEditText!!.text.toString()
+            .isNotEmpty()
 
     private fun saveEvent() {
         val eventReference: DatabaseReference
