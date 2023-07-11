@@ -1,6 +1,5 @@
 package android.freelessons.org.sampleandroidappusingfirebase.ui
 
-import android.app.DialogFragment
 import android.freelessons.org.sampleandroidappusingfirebase.R
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,17 +13,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.DialogFragment
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 
 class SignInUI : DialogFragment() {
-    var signInButton: Button? = null
-    var passwordEditText: EditText? = null
-    var emailAutoCompleteTextView: AutoCompleteTextView? = null
-    var firebaseAuth: FirebaseAuth? = null
+    private var signInButton: Button? = null
+    private var passwordEditText: EditText? = null
+    private var emailAutoCompleteTextView: AutoCompleteTextView? = null
+    private var firebaseAuth: FirebaseAuth? = null
     @RequiresApi(api = Build.VERSION_CODES.M)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.signin, null, false)
         findViews(v)
         firebaseAuth = FirebaseAuth.getInstance()
@@ -46,7 +46,7 @@ class SignInUI : DialogFragment() {
     @RequiresApi(api = Build.VERSION_CODES.M)
     private fun findViews(rootView: View) {
         signInButton = rootView.findViewById<View>(R.id.email_sign_in) as Button
-        signInButton!!.setOnClickListener { view: View? -> signIn() }
+        signInButton!!.setOnClickListener { signIn() }
         emailAutoCompleteTextView = rootView.findViewById(R.id.email)
         passwordEditText = rootView.findViewById(R.id.password)
     }
@@ -56,10 +56,10 @@ class SignInUI : DialogFragment() {
         if (inputValid()) {
             firebaseAuth!!.signInWithEmailAndPassword(emailAutoCompleteTextView!!.text.toString(), passwordEditText!!.text.toString()).addOnCompleteListener { task: Task<AuthResult?> ->
                 if (task.isSuccessful) {
-                    Toast.makeText(activity.applicationContext, "Sign in successful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, "Sign in successful", Toast.LENGTH_SHORT).show()
                     dismiss()
                 } else {
-                    Toast.makeText(activity.applicationContext, "Error: ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, "Error: ", Toast.LENGTH_SHORT).show()
                 }
             }
         } else {
@@ -77,11 +77,11 @@ class SignInUI : DialogFragment() {
 
     //&& emailAutoCompleteTextView.getText().toString();
     private val isEmailValid: Boolean
-        get() = !emailAutoCompleteTextView!!.text.toString().isEmpty()
+        get() = emailAutoCompleteTextView!!.text.toString().isNotEmpty()
 
     //&& emailAutoCompleteTextView.getText().toString();
     private val isPasswordValid: Boolean
-        get() = !passwordEditText!!.text.toString().isEmpty() && passwordEditText!!.text.toString().length > 6
+        get() = passwordEditText!!.text.toString().isNotEmpty() && passwordEditText?.text.toString().length > 6
 
     companion object {
         @JvmStatic

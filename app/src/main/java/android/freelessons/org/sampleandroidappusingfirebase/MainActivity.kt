@@ -1,6 +1,5 @@
 package android.freelessons.org.sampleandroidappusingfirebase
 
-import android.app.DialogFragment
 import android.content.Intent
 import android.freelessons.org.sampleandroidappusingfirebase.domain.Event
 import android.freelessons.org.sampleandroidappusingfirebase.session.SessionManager
@@ -17,6 +16,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
@@ -133,12 +133,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun signIn() {
         val dialog: DialogFragment = SignInUI.newInstance()
-        dialog.show(fragmentManager, "SignInUI")
+        dialog.show(supportFragmentManager, "SignInUI")
     }
 
     private fun signUp() {
         val dialog: DialogFragment = SignUpUI.newInstance()
-        dialog.show(fragmentManager, "SignUpUI")
+        dialog.show(supportFragmentManager, "SignUpUI")
     }
 
     private fun signOut() {

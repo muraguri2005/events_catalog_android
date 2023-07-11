@@ -1,6 +1,5 @@
 package android.freelessons.org.sampleandroidappusingfirebase.ui
 
-import android.app.DialogFragment
 import android.freelessons.org.sampleandroidappusingfirebase.R
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.DialogFragment
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -24,7 +24,7 @@ class SignUpUI : DialogFragment() {
     private var emailAutoCompleteTextView: AutoCompleteTextView? = null
     private var firebaseAuth: FirebaseAuth? = null
     @RequiresApi(api = Build.VERSION_CODES.M)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.signup, null, false)
         findViews(v)
         firebaseAuth = FirebaseAuth.getInstance()
@@ -56,11 +56,11 @@ class SignUpUI : DialogFragment() {
         if (inputValid()) {
             firebaseAuth!!.createUserWithEmailAndPassword(emailAutoCompleteTextView!!.text.toString(), passwordEditText!!.text.toString()).addOnCompleteListener { task: Task<AuthResult?> ->
                 if (task.isSuccessful) {
-                    Toast.makeText(activity.applicationContext, "Sign Up successful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, "Sign Up successful", Toast.LENGTH_SHORT).show()
                     dismiss()
                 } else {
                     val exception = task.exception
-                    Toast.makeText(activity.applicationContext, "Error: " + if (exception != null) exception.message else "Unknow error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity?.applicationContext, "Error: " + if (exception != null) exception.message else "Unknow error", Toast.LENGTH_SHORT).show()
                 }
             }
         } else {
