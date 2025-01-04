@@ -2,12 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "android.freelessons.org.sampleandroidappusingfirebase"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdkVersion 23
         multiDexEnabled true
         versionCode 1
         versionName "1.${versionCode}"
@@ -21,6 +20,9 @@ android {
     compileOptions {
         sourceCompatibility = 17
         targetCompatibility = 17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     namespace 'android.freelessons.org.sampleandroidappusingfirebase'
 }
